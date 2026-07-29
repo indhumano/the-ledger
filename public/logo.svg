@@ -1,0 +1,53 @@
+<svg width="920" height="280" viewBox="0 0 920 280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cover" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#35543F"/>
+      <stop offset="100%" stop-color="#213D2B"/>
+    </linearGradient>
+    <linearGradient id="spine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#182A20"/>
+      <stop offset="100%" stop-color="#223A2C"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E3C567"/>
+      <stop offset="55%" stop-color="#C7A233"/>
+      <stop offset="100%" stop-color="#9C7A1E"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ============ ICON MARK ============ -->
+  <g transform="translate(20,20) scale(0.475)">
+    <rect x="16" y="16" width="480" height="480" rx="100" fill="url(#cover)"/>
+    <path d="M16 116 a100 100 0 0 1 100 -100 h -30 a100 100 0 0 0 -100 100 v280 a100 100 0 0 0 100 100 h30 a100 100 0 0 1 -100 -100 z" fill="url(#spine)"/>
+    <g fill="#C7A233" opacity="0.55">
+      <rect x="34" y="128" width="26" height="7" rx="3.5"/>
+      <rect x="34" y="188" width="26" height="7" rx="3.5"/>
+      <rect x="34" y="248" width="26" height="7" rx="3.5"/>
+      <rect x="34" y="308" width="26" height="7" rx="3.5"/>
+      <rect x="34" y="368" width="26" height="7" rx="3.5"/>
+    </g>
+    <g>
+      <rect x="205" y="132" width="46" height="216" rx="6" fill="url(#gold)"/>
+      <rect x="187" y="132" width="82" height="26" rx="6" fill="url(#gold)"/>
+      <rect x="205" y="298" width="150" height="50" rx="6" fill="url(#gold)"/>
+      <rect x="326" y="292" width="30" height="62" rx="6" fill="url(#gold)"/>
+      <g stroke="#7B5F17" stroke-width="4" opacity="0.65">
+        <line x1="215" y1="168" x2="241" y2="168"/>
+        <line x1="215" y1="208" x2="241" y2="208"/>
+        <line x1="215" y1="248" x2="241" y2="248"/>
+      </g>
+    </g>
+    <rect x="150" y="378" width="212" height="10" rx="5" fill="#B4472E"/>
+    <rect x="150" y="396" width="212" height="4" rx="2" fill="#C7A233" opacity="0.8"/>
+    <rect x="34" y="34" width="444" height="444" rx="86" fill="none" stroke="#C7A233" stroke-opacity="0.25" stroke-width="3"/>
+  </g>
+
+  <!-- ============ WORDMARK ============ -->
+  <g transform="translate(270,0)">
+    <text x="0" y="88" font-family="Georgia, 'Times New Roman', serif" font-size="30" letter-spacing="10" fill="#B4472E" font-weight="600">THE</text>
+    <text x="0" y="172" font-family="Georgia, 'Times New Roman', serif" font-size="98" fill="#213D2B" font-weight="700">Ledger</text>
+    <rect x="4" y="192" width="430" height="6" rx="3" fill="#B4472E"/>
+    <rect x="4" y="203" width="430" height="3" rx="1.5" fill="#C7A233" opacity="0.85"/>
+    <text x="4" y="238" font-family="'Courier New', ui-monospace, monospace" font-size="19" letter-spacing="4" fill="#5B6B60" font-weight="600">EVERY RUPEE, ACCOUNTED FOR</text>
+  </g>
+</svg>

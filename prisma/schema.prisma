@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Category {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  budgetPlans BudgetPlan[]
+  spendings   Spending[]
+}
+
+model FamilyIncome {
+  id     Int      @id @default(autoincrement())
+  source String
+  amount Int
+  date   DateTime @default(now())
+}
+
+model BudgetPlan {
+  id            Int      @id @default(autoincrement())
+  categoryId    Int
+  amountPlanned Decimal
+  date          DateTime @default(now())
+  category      Category @relation(fields: [categoryId], references: [id])
+}
+
+model Spending {
+  id          Int      @id @default(autoincrement())
+  categoryId  Int
+  amountSpent Decimal
+  date        DateTime @default(now())
+  comment     String?
+  userId      Int
+  category    Category @relation(fields: [categoryId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model SavingsCategory {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  savings Saving[]
+}
+
+model Saving {
+  id         Int             @id @default(autoincrement())
+  categoryId Int
+  amount     Decimal
+  date       DateTime        @default(now())
+  category   SavingsCategory @relation(fields: [categoryId], references: [id])
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  username     String     @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  spending     Spending[]
+}
