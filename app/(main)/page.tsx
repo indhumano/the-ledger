@@ -128,7 +128,7 @@ export default function DashboardPage() {
                                     <Tooltip
                                         formatter={(value) => {
                                             const num = typeof value === "number" ? value : Number(value ?? 0);
-                                            return `₹${num.toLocaleString()}`;
+                                            return `₹${num.toLocaleString()}`; 
                                         }}
                                     />
                             </PieChart>
