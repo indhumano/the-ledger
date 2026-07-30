@@ -125,7 +125,12 @@ export default function DashboardPage() {
                                         <Cell key={index} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip formatter={(value: number) => `₹${value.toLocaleString()}`} />
+                                    <Tooltip
+                                        formatter={(value) => {
+                                            const num = typeof value === "number" ? value : Number(value ?? 0);
+                                            return `₹${num.toLocaleString()}`;
+                                        }}
+                                    />
                             </PieChart>
                         </ResponsiveContainer>
                     )}
