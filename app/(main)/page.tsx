@@ -142,7 +142,12 @@ export default function DashboardPage() {
                         <BarChart data={barData}>
                             <XAxis dataKey="name" />
                             <YAxis />
-                            <Tooltip formatter={(value: number) => `₹${value.toLocaleString()}`} />
+                            <Tooltip
+                                formatter={(value) => {
+                                    const num = typeof value === "number" ? value : Number(value ?? 0);
+                                    return `₹${num.toLocaleString()}`;
+                                }}
+                            />
                             <Legend />
                             <Bar dataKey="Income" fill="#7c3aed" />
                             <Bar dataKey="Spending" fill="#dc2626" />
