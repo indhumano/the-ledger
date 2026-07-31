@@ -1,32 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-function monthRange(month: string) {
-    const [year, mon] = month.split("-").map(Number);
-    const start = new Date(year, mon - 1, 1);
-    const end = new Date(year, mon, 1);
-    return { start, end };
-}
-
 export async function GET(req: NextRequest) {
     const month = req.nextUrl.searchParams.get("month");
     if (!month) {
         return NextResponse.json({ error: "month is required" }, { status: 400 });
     }
-    const { start, end } = monthRange(month);
 
     const categories = await prisma.category.findMany({
         orderBy: { name: "asc" },
         include: {
-            budgetPlans: {
-                where: { date: { gte: start, lt: end } },
-            },
+            budgetPlans: { where: { month } },
         },
     });
 
     const income = await prisma.familyIncome.aggregate({
         _sum: { amount: true },
-        where: { date: { gte: start, lt: end } },
+        where: { month },
     });
 
     const result = categories.map((cat) => ({
@@ -53,10 +43,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "month is required" }, { status: 400 });
     }
 
-    const { start, end } = monthRange(month);
-
     const existing = await prisma.budgetPlan.findFirst({
-        where: { categoryId, date: { gte: start, lt: end } },
+        where: { categoryId, month },
     });
 
     const plan = existing
@@ -65,7 +53,12 @@ export async function POST(req: NextRequest) {
             data: { amountPlanned },
         })
         : await prisma.budgetPlan.create({
-            data: { categoryId, amountPlanned, date: start },
+            data: {
+                categoryId,
+                amountPlanned,
+                month,
+                // date is left to its @default(now())
+            },
         });
 
     return NextResponse.json(plan);

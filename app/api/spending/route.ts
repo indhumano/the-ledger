@@ -2,24 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserId } from "@/lib/session";
 
-function monthRange(month: string) {
-    const [year, mon] = month.split("-").map(Number);
-    const start = new Date(year, mon - 1, 1);
-    const end = new Date(year, mon, 1);
-    return { start, end };
-}
-
 export async function GET(req: NextRequest) {
     const month = req.nextUrl.searchParams.get("month");
     if (!month) {
         return NextResponse.json({ error: "month is required" }, { status: 400 });
     }
-    const { start, end } = monthRange(month);
     const categories = await prisma.category.findMany({
         orderBy: { name: "asc" },
         include: {
-            budgetPlans: { where: { date: { gte: start, lt: end } } },
-            spendings: { where: { date: { gte: start, lt: end } } },
+            budgetPlans: { where: { month } },
+            spendings: { where: { month } },
         },
     });
     const result = categories.map((cat) => ({
@@ -47,10 +39,11 @@ export async function POST(req: NextRequest) {
     if (!month) {
         return NextResponse.json({ error: "month is required" }, { status: 400 });
     }
-    const { start, end } = monthRange(month);
+
     const existing = await prisma.spending.findFirst({
-        where: { categoryId, date: { gte: start, lt: end } },
+        where: { categoryId, month },
     });
+
     const spending = existing
         ? await prisma.spending.update({
             where: { id: existing.id },
@@ -62,7 +55,8 @@ export async function POST(req: NextRequest) {
                 user: { connect: { id: userId } },
                 amountSpent,
                 comment: comment ?? null,
-                date: start,
+                month,
+                // date is left to its @default(now()) — records when it was entered
             },
         });
     return NextResponse.json(spending);

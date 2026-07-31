@@ -1,22 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-function monthRange(month: string) {
-    const [year, mon] = month.split("-").map(Number);
-    const start = new Date(year, mon - 1, 1);
-    const end = new Date(year, mon, 1);
-    return { start, end };
-}
-
 export async function GET(req: NextRequest) {
     const month = req.nextUrl.searchParams.get("month");
     if (!month) {
         return NextResponse.json({ error: "month is required" }, { status: 400 });
     }
-    const { start, end } = monthRange(month);
 
     const savings = await prisma.saving.findMany({
-        where: { date: { gte: start, lt: end } },
+        where: { month },
         include: { category: true },
         orderBy: { date: "desc" },
     });
@@ -46,10 +38,13 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "month is required" }, { status: 400 });
     }
 
-    const { start } = monthRange(month);
-
     const saving = await prisma.saving.create({
-        data: { categoryId, amount, date: start },
+        data: {
+            categoryId,
+            amount,
+            month,
+            // date is left to its @default(now())
+        },
     });
 
     return NextResponse.json(saving, { status: 201 });

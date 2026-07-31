@@ -13,7 +13,7 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const { source, amount, date } = body;
+    const { source, amount, month } = body;
 
     if (!source?.trim()) {
         return NextResponse.json({ error: "Source is required" }, { status: 400 });
@@ -28,7 +28,7 @@ export async function PUT(
             data: {
                 source: source.trim(),
                 amount: Math.round(amount),
-                ...(date ? { date: new Date(date) } : {}),
+                ...(month ? { month } : {}),
             },
         });
         return NextResponse.json(income);

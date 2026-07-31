@@ -1,35 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-function monthRange(month: string) {
-    const [year, mon] = month.split("-").map(Number);
-    const start = new Date(year, mon - 1, 1);
-    const end = new Date(year, mon, 1);
-    return { start, end };
-}
-
 export async function GET(req: NextRequest) {
     const month = req.nextUrl.searchParams.get("month");
     if (!month) {
         return NextResponse.json({ error: "month is required" }, { status: 400 });
     }
-    const { start, end } = monthRange(month);
 
     const income = await prisma.familyIncome.aggregate({
         _sum: { amount: true },
-        where: { date: { gte: start, lt: end } },
+        where: { month },
     });
 
     const savings = await prisma.saving.aggregate({
         _sum: { amount: true },
-        where: { date: { gte: start, lt: end } },
+        where: { month },
     });
 
     const categories = await prisma.category.findMany({
         orderBy: { name: "asc" },
         include: {
-            budgetPlans: { where: { date: { gte: start, lt: end } } },
-            spendings: { where: { date: { gte: start, lt: end } } },
+            budgetPlans: { where: { month } },
+            spendings: { where: { month } },
         },
     });
 

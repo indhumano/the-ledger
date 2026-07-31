@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -17,6 +18,7 @@ model FamilyIncome {
   id     Int      @id @default(autoincrement())
   source String
   amount Int
+  month	 String?
   date   DateTime @default(now())
 }
 
@@ -24,6 +26,7 @@ model BudgetPlan {
   id            Int      @id @default(autoincrement())
   categoryId    Int
   amountPlanned Decimal
+  month			String?
   date          DateTime @default(now())
   category      Category @relation(fields: [categoryId], references: [id])
 }
@@ -35,6 +38,7 @@ model Spending {
   date        DateTime @default(now())
   comment     String?
   userId      Int
+  month	      String?
   category    Category @relation(fields: [categoryId], references: [id])
   user        User     @relation(fields: [userId], references: [id])
 }
@@ -50,6 +54,7 @@ model Saving {
   categoryId Int
   amount     Decimal
   date       DateTime        @default(now())
+  month		 String?
   category   SavingsCategory @relation(fields: [categoryId], references: [id])
 }
 
