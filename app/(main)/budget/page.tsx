@@ -17,14 +17,27 @@ function currentMonth() {
 export default function BudgetPage() {
     const [month, setMonth] = useState(currentMonth());
     const [totalIncome, setTotalIncome] = useState(0);
+    const [totalSavings, setTotalSavings] = useState(0);
     const [categories, setCategories] = useState<CategoryBudget[]>([]);
     const [savingId, setSavingId] = useState<number | null>(null);
+    const [error, setError] = useState("");
 
     const fetchData = async (selectedMonth: string) => {
+        setError("");
         const res = await fetch(`/api/budget?month=${selectedMonth}`);
         const data = await res.json();
-        setTotalIncome(data.totalIncome);
-        setCategories(data.categories);
+
+        if (!res.ok) {
+            setError(data.error || "Failed to load budget data");
+            setTotalIncome(0);
+            setTotalSavings(0);
+            setCategories([]);
+            return;
+        }
+
+        setTotalIncome(data.totalIncome ?? 0);
+        setTotalSavings(data.totalSavings ?? 0);
+        setCategories(data.categories ?? []);
     };
 
     useEffect(() => {
@@ -55,12 +68,13 @@ export default function BudgetPage() {
         fetchData(month);
     };
 
-    const totalAllocated = categories.reduce((sum, c) => sum + Number(c.amountPlanned), 0);
-    const remaining = totalIncome - totalAllocated;
-    const isOverAllocated = totalAllocated > totalIncome;
+    const totalAllocated = (categories ?? []).reduce((sum, c) => sum + Number(c.amountPlanned), 0);
+    const totalOutflow = totalAllocated + totalSavings;
+    const remaining = totalIncome - totalOutflow;
+    const isOverAllocated = totalOutflow > totalIncome;
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-4">
+        <div className="max-w-xl mx-auto mt-10 p-4">
             <div className="flex items-center justify-between mb-1">
                 <h1 className="text-2xl font-bold">Budget Planning</h1>
                 <input
@@ -72,20 +86,30 @@ export default function BudgetPage() {
             </div>
             <p className="text-sm text-base-content/60 mb-4">Allocating budget for {month}</p>
 
-            {isOverAllocated && (
-                <div role="alert" className="alert alert-warning mb-4">
-                    <span>Allocated budget exceeds total income for this month.</span>
+            {error && (
+                <div role="alert" className="alert alert-error mb-4">
+                    <span>{error}</span>
                 </div>
             )}
 
-            <div className="stats shadow w-full mb-4">
+            {isOverAllocated && (
+                <div role="alert" className="alert alert-warning mb-4">
+                    <span>Allocated budget plus savings exceeds total income for this month.</span>
+                </div>
+            )}
+
+            <div className="stats shadow w-full mb-4 stats-vertical sm:stats-horizontal">
                 <div className="stat">
                     <div className="stat-title">Total Income</div>
                     <div className="stat-value text-primary text-lg">₹{totalIncome.toLocaleString()}</div>
                 </div>
                 <div className="stat">
-                    <div className="stat-title">Allocated</div>
+                    <div className="stat-title">Category Budget</div>
                     <div className="stat-value text-lg">₹{totalAllocated.toLocaleString()}</div>
+                </div>
+                <div className="stat">
+                    <div className="stat-title">Savings</div>
+                    <div className="stat-value text-success text-lg">₹{totalSavings.toLocaleString()}</div>
                 </div>
                 <div className="stat">
                     <div className="stat-title">Remaining</div>
@@ -95,7 +119,7 @@ export default function BudgetPage() {
                 </div>
             </div>
 
-            {categories.length === 0 && (
+            {categories.length === 0 && !error && (
                 <p className="text-sm text-base-content/60">
                     No categories yet. Add some on the Category page first.
                 </p>
@@ -125,6 +149,10 @@ export default function BudgetPage() {
                     </li>
                 ))}
             </ul>
+
+            <p className="text-xs text-base-content/50 mt-4">
+                Savings total reflects amounts already logged on the Savings page for this month.
+            </p>
         </div>
     );
 }

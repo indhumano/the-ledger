@@ -19,6 +19,11 @@ export async function GET(req: NextRequest) {
         where: { month },
     });
 
+    const savings = await prisma.saving.aggregate({
+        _sum: { amount: true },
+        where: { month },
+    });
+
     const result = categories.map((cat) => ({
         categoryId: cat.id,
         categoryName: cat.name,
@@ -28,6 +33,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
         totalIncome: income._sum.amount ?? 0,
+        totalSavings: Number(savings._sum.amount ?? 0),
         categories: result,
     });
 }
@@ -53,11 +59,7 @@ export async function POST(req: NextRequest) {
             data: { amountPlanned },
         })
         : await prisma.budgetPlan.create({
-            data: {
-                categoryId,
-                amountPlanned,
-                month,
-            },
+            data: { categoryId, amountPlanned, month },
         });
 
     return NextResponse.json(plan);

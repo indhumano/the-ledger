@@ -40,7 +40,8 @@ export async function GET(req: NextRequest) {
     const totalIncome = income._sum.amount ?? 0;
     const totalSpending = categorySummary.reduce((sum, c) => sum + c.amountSpent, 0);
     const totalSavings = Number(savings._sum.amount ?? 0);
-    const remainingBalance = totalIncome - totalSpending;
+    // Balance = income left after both spending and savings are accounted for
+    const remainingBalance = totalIncome - totalSpending - totalSavings;
 
     return NextResponse.json({
         totalIncome,
