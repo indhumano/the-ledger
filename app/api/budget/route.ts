@@ -57,7 +57,6 @@ export async function POST(req: NextRequest) {
                 categoryId,
                 amountPlanned,
                 month,
-                // date is left to its @default(now())
             },
         });
 

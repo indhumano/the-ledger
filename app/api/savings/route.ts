@@ -43,7 +43,6 @@ export async function POST(req: NextRequest) {
             categoryId,
             amount,
             month,
-            // date is left to its @default(now())
         },
     });
 

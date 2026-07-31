@@ -56,7 +56,6 @@ export async function POST(req: NextRequest) {
                 amountSpent,
                 comment: comment ?? null,
                 month,
-                // date is left to its @default(now()) — records when it was entered
             },
         });
     return NextResponse.json(spending);
